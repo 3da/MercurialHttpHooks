@@ -8,7 +8,7 @@ from mercurial.utils import (
 )
 
 
-def hook(ui, repo, node, **kwargs):
+def hook(ui, repo, hooktype, node, **kwargs):
     url = ui.config("httphooks", 'url')
     if not url:
         ui.warn('httphooks.url is null')
@@ -21,6 +21,7 @@ def hook(ui, repo, node, **kwargs):
             
             changesets.append(change)
         data = {'Commits': changesets,
+                'HookType': hooktype,
                'UserName': procutil.getuser()}
         resp = requests.post(url, json=data)
         result = resp.json()
