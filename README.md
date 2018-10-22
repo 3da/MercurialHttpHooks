@@ -12,6 +12,8 @@ Add to your .hg\hgrc file
 ```
 [hooks]
 pretxnchangegroup.HttpHooks = python:hgext.HttpHooks.hook
+incoming.HttpHooks = python:hgext.HttpHooks.hook
+txnclose.HttpHooks = python:hgext.HttpHooks.hook
 
 [httphooks]
 url = http://localhost:36884/api/
