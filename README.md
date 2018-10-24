@@ -4,7 +4,8 @@
 1. Install library 'requests' (`pip install requests`)
 2. Copy HttpHooks.py to your python lib directory.
 For example: C:\Python27\Lib\site-packages\hgext
-3. Add `pretxnchangegroup` hook to your hgrc file and specify API url as described below.
+3. Add `pretxnchangegroup` or different hook to your hgrc file and specify API url as described below.
+
 
 ### Exmple config
 
@@ -19,7 +20,14 @@ txnclose.HttpHooks = python:hgext.HttpHooks.hook
 url = http://localhost:36884/api/
 ```
 
-### Example request
+Tested work with following hooks:
+- pretxnchangegroup
+- incoming
+- txnclose
+- tag
+- preoutgoing
+
+### Example request sent by hook
 ```
 {
   "UserName": "IUSR",
@@ -64,7 +72,7 @@ url = http://localhost:36884/api/
 ```
 
 
-### Example response
+### Example response should be sent to hook
 ```
 {
   "Success": false,
