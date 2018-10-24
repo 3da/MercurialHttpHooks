@@ -8,29 +8,29 @@ from mercurial.utils import (
 )
 
 
-def hook(ui, repo, hooktype, node, **kwargs):
+def hook(ui, repo, hooktype, node=None, **kwargs):
     url = ui.config("httphooks", 'url')
     if not url:
         ui.warn('httphooks.url is null')
         return -2
     try:
         changesets=list()
-        for rev in xrange(repo[node].rev(), len(repo)):
-            item = repo[rev]
-            change = createCommitInfo(item,2)
-            
-            changesets.append(change)
+        if node and repo:
+            for rev in xrange(repo[node].rev(), len(repo)):
+                item = repo[rev]
+                change = createCommitInfo(item,2)
+                
+                changesets.append(change)
         data = {'Commits': changesets,
                 'HookType': hooktype,
-               'UserName': procutil.getuser()}
+                'UserName': procutil.getuser()}
         resp = requests.post(url, json=data)
         result = resp.json()
-        
         if result['success']:
-            if result['message']:
+            if result['message'] and node:
                 ui.write('{}\n'.format(result['message']))
             return 0
-        if result['message']:
+        if result['message'] and node:
             ui.warn('{}\n'.format(result['message']))
             return 1
     except Exception as ee:
