@@ -20,6 +20,9 @@ txnclose.HttpHooks = python:hgext.HttpHooks.hook
 url = http://localhost:36884/api/
 ```
 
+Alternatively you can write full path for script:
+```python:/.../HttpHooks.py:hook```
+
 Tested work with following hooks:
 - pretxnchangegroup
 - incoming
