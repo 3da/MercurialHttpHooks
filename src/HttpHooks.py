@@ -7,11 +7,22 @@ from mercurial.utils import (
     procutil,
 )
 
+import simplejson as json
+
 
 def hook(ui, repo, hooktype, node=None, **kwargs):
+    def warn(message):
+        if node:
+            ui.warn(message)
+    
+    def write(message):
+        if node:
+            ui.write(message)
+    
+    
     url = ui.config("httphooks", 'url')
     if not url:
-        ui.warn('httphooks.url is null')
+        warn('httphooks.url is null')
         return -2
     try:
         changesets=list()
@@ -24,22 +35,24 @@ def hook(ui, repo, hooktype, node=None, **kwargs):
         data = {'Commits': changesets,
                 'HookType': hooktype,
                 'UserName': procutil.getuser()}
+        #write('{}\n'.format(json.dumps(data)))
         resp = requests.post(url, json=data)
+        #write('{}\n'.format(resp.text))
         result = resp.json()
         if result['success']:
-            if result['message'] and node:
-                ui.write('{}\n'.format(result['message']))
+            if result['message']:
+                write('{}\n'.format(result['message']))
             return 0
-        if result['message'] and node:
-            ui.warn('{}\n'.format(result['message']))
+        if result['message']:
+            warn('{}\n'.format(result['message']))
             return 1
     except Exception as ee:
-        ui.warn('{}'.format(ee))
+        warn('Exception: {}\n'.format(ee))
     return -1
 
 
 def createCommitInfo(item, depth):
-    return {'Message' : item.description(),
+    return {'Message' : item.description().decode('windows-1251'),
                      'Rev' : item.rev(),
                      'Branch' : item.branch(),
                      'Tags' : item.tags(),

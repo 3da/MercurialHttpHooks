@@ -15,17 +15,22 @@ config = "hgweb.config"
 
 import traceback
 import sys
+import logging
 from mercurial import demandimport; demandimport.enable()
 from mercurial.hgweb import hgweb, wsgicgi
 
 sys.stderr = sys.stdout
+
+logging.basicConfig(filename="log.txt", level=logging.INFO)
 
 application = hgweb(config)
 
 
 
 try:
+	logging.info("Request")
 	wsgicgi.launch(application)
 except Exception as ee:
+	logging.error("{}".format(ee))
 	print "\n\n{}".format(ee)
 	#traceback.print_exc()
